@@ -6,6 +6,14 @@ const Todo = () => {
     const[todoList,settodoList]=useState(localStorage.getItem("todos")?
      JSON.parse(localStorage.getItem("todos")):[]);
 
+     const [filter,setFilter]=useState("all");
+
+     const filteredTodos=todoList.filter((todo)=>{
+        if(filter === "active") return !todo.isComplete;
+         if(filter === "completed") return todo.isComplete;
+      return true;
+     })
+
     const inputref=useRef();
     const add=()=>{
  const inputText=inputref.current.value.trim();
@@ -40,7 +48,7 @@ const Todo = () => {
      })
     }
 
-    useEffect(()=>{
+    useEffect(()=>{          
 localStorage.setItem("todos", JSON.stringify(todoList))
     },[todoList])
 
@@ -61,12 +69,45 @@ localStorage.setItem("todos", JSON.stringify(todoList))
             <button onClick={add}className='border-none rounded-full bg-orange-600 w-32 h-14 text-white text-lg cursor-pointer'>ADD +</button>
         </div>
 
+        <div className='flex justify-between mt-4 gap-2'>
+
+  <button
+    onClick={() => setFilter("all")}
+    className={`flex-1 py-2 rounded-lg ${
+      filter === "all" ? "bg-orange-600 text-white" : "bg-gray-200"
+    }`}
+  >
+    All
+  </button> 
+
+    <button
+    onClick={() => setFilter("active")}
+    className={`flex-1 py-2 rounded-lg ${
+      filter === "active" ? "bg-orange-600 text-white" : "bg-gray-200"
+    }`}
+  >
+    Active
+  </button>
+
+  <button
+    onClick={() => setFilter("completed")}
+    className={`flex-1 py-2 rounded-lg ${
+      filter === "completed" ? "bg-orange-600 text-white" : "bg-gray-200"
+    }`}
+  >
+    Completed
+  </button>
+
+  
+
+        </div>
+
         {/* TODO LIST */}
 
         <div>
 
-          {todoList.map((item,index)=>{
-            return <TodoItem key={index} text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
+          {filteredTodos.map((item)=>{
+            return <TodoItem key={item.id}  text={item.text} id={item.id} isComplete={item.isComplete} deleteTodo={deleteTodo} toggle={toggle}/>
           })}
            
 
